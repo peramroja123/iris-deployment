@@ -1,0 +1,26 @@
+from flask import Flask , render_template , request
+import pickle
+
+from sklearn.linear_model import LogisticRegression
+
+app = Flask(__name__)
+
+
+@app.route("/")
+def fun():
+    return render_template("index.html")
+
+@app.route("/sk", methods = ['POST'])
+def predict():
+    if request.method == 'POST':
+        spl = request.form['sepal_length']
+        spw = request.form['sepal_width']
+        ptl = request.form['petal_length']
+        ptw = request.form['petal_width']
+        data = [[float(spl) , float(spw) , float(ptl) , float(ptw)]]
+        model = pickle.load(open('iris.pkl', 'rb'))
+        prediction = model.predict(data)[0]
+    return render_template("index.html" , prediction=prediction)
+
+if __name__ == "__main__":
+    app.run(debug=True)
